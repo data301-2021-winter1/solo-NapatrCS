@@ -5,15 +5,14 @@ import seaborn as sns
 
 
 def load_and_process_goals(df):
-    df = find_and_delete_duplicates(df)
-    season_games_min = 30
-    threshold = len(df) * .40
-    df = (df.dropna(thresh=threshold, axis=1)
-          .drop(['D'], axis=1)
-          .sort_values(by=['Pos', 'GD'], ascending=[True, False])
-          )
-    df1 = df[df['GP'] >= season_games_min]
-    df1 = df1[df1['Conference'] == 'Overall']
+    df1 = (
+    wine.rename(columns={"Sv%": "saves"})
+    .assign(Positive_Winrate=lambda x: np.where((x.saves > 50), 1, 0))
+    .query("W% > 50 and color_filter == 1")
+    .sort_values("W%", ascending=False)
+    .reset_index(drop=True)
+    .loc[:, ["W%", "hue"]]
+)
     return df1
 
 
